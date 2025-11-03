@@ -1,6 +1,5 @@
 from enum import Enum
 from pathlib import Path
-from urllib.parse import urlparse
 from datetime import time
 
 # Job class
