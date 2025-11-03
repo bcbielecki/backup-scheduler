@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from urllib.parse import urlparse
+from datetime import time
 
 # Job class
 
@@ -12,7 +13,7 @@ from urllib.parse import urlparse
 #    - SCHEDULED: Job is scheduled to run at a future time, but it is not queued
 #    - DISABLED: Job is disabled and will not run, even if its schedule time arrives
 #    - QUEUED: Job is queued because its schedule time arrived and is waiting for execution
-#    - NULL: Job has no status -either it is the default value at initialization or something went wrong
+#    - NULL: Job has no status—either it is the default value at initialization or something went wrong
 class JobStatus(Enum):
     RUNNING = "running"
     COMPLETED = "completed"
@@ -26,7 +27,7 @@ class JobStatus(Enum):
 # The BackupType enum defines the types of backup destinations supported.
 # Currently supported types are:
 #   - GOOGLEDRIVE: Backup to Google Drive
-#   - NULL: No backup type specified -either it is the default value at initialization or something went wrong
+#   - NULL: No backup type specified—either it is the default value at initialization or something went wrong
 class BackupType(Enum):
     GOOGLEDRIVE = "Google Drive"
     NULL = "null"
@@ -38,6 +39,26 @@ class BackupType(Enum):
 class BackupRetentionPolicy(Enum):
     KEEP_ALL = "keep_all"
     DELETE_OLDEST = "delete_old"
+
+# <bcbielecki> 2025-11-02 alphaV0.1
+# These values are more self-explanatory, but one should expect that with each value,
+# different properties will be needed to specify the job schedule
+class JobRecurrence(Enum):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+
+# <bcbielecki> 2025-11-02 alphaV0.1
+# Days of the week for scheduling purposes—should be used in conjunction with
+# JobRecurrence.WEEKLY
+class JobScheduleDays(Enum):
+    MONDAY = "M"
+    TUESDAY = "T"
+    WEDNESDAY = "W"
+    THURSDAY = "R"
+    FRIDAY = "F"
+    SATURDAY = "U"
+    SUNDAY = "S"
 
 # <bcbielecki> 2025-11-02 alphaV0.1
 # An instance of the BackupJob class represents a job that will be executed by the core system.
@@ -55,7 +76,7 @@ class BackupJob:
 
         # Initialize some default values
 
-        self.status = JobStatus.DISABLED
+        self.status = JobStatus.NULL
 
         # Backup source file/folder settings
         self.source_path = None # Should be a Path object
@@ -69,19 +90,83 @@ class BackupJob:
         self.retention_policy = BackupRetentionPolicy.DELETE_OLDEST
         
         # Backup scheduling settings
-        # self.schedule_time = 2:30
-        # self.schedule_timezone: PST
-        # self.schedule_days: MWF
+        self.schedule_time = None # Should be a datetime.time object w/ timezone specified
+        self.schedule_days = [] # Should be a list of JobScheduleDays enum values—meant only for JobRecurrence.WEEKLY
+        self.schedule_day_of_month = None # Should be an integer between 1 and 31—meant only for JobRecurrence.MONTHLY
+        self.schedule_recurrence_policy = JobRecurrence.DAILY
 
-        # # Backup script settings
-        # scripts:
-        #     pre: /usr/home/myscript.sh
-        #     post: /usr/home/myotherscript.sh
-        # retention: 3
-        
+        # Backup script settings
+        self.script_pre_path = None # Should be a Path object
+        self.script_post_path = None # Should be a Path object     
 
     def validate(self):
         # This is where we can validate all the job properties
-        pass
+
+        if self.status not in JobStatus:
+            raise ValueError(f"Invalid job status: {self.status}")
+        elif self.status == JobStatus.NULL:
+            raise ValueError("Job status cannot be NULL.")
+        
+         # Backup source file/folder settings
+        if not isinstance(self.source_path, Path):
+            raise ValueError("Source path must be a valid Path object.")
+        if not self.source_path.exists():
+            raise ValueError(f"Source path '{self.source_path}' does not exist.")
+        if not isinstance(self.recursive, bool):
+            raise ValueError("Recursive flag must be a boolean value.")
+        
+        # Backup destination settings
+        if not isinstance(self.compression, bool):
+            raise ValueError("Compression flag must be a boolean value.")
+        
+        if self.BackupType not in BackupType:
+            raise ValueError(f"Invalid backup type: {self.BackupType}")
+        elif self.BackupType == BackupType.NULL:
+            raise ValueError("Backup type cannot be NULL.")
+        
+        if not isinstance(self.destination_url, str):
+            raise ValueError("Destination URL must be a valid string.")
+        
+        if self.max_file_retention_size is not None:
+            if not isinstance(self.max_file_retention_size, int) or self.max_file_retention_size <= 0:
+                raise ValueError("Max file retention size must be a positive integer in MB.")
+            
+        if self.retention_policy not in BackupRetentionPolicy:
+            raise ValueError(f"Invalid retention policy: {self.retention_policy}")
+
+        # Backup scheduling settings
+        self._validate_schedule_time()
+        
+        if self.schedule_recurrence_policy in JobRecurrence:
+            if self.schedule_recurrence_policy == JobRecurrence.WEEKLY:
+                self._validate_weekly_schedule()
+            elif self.schedule_recurrence_policy == JobRecurrence.MONTHLY:    
+                self._validate_monthly_schedule()
+            elif self.schedule_recurrence_policy == JobRecurrence.DAILY:
+                self._validate_daily_schedule()
+            else:
+                raise ValueError(f"Recurrence policy with unimplemented validation: {self.schedule_recurrence_policy}")
+        else:
+            raise ValueError(f"Invalid recurrence policy: {self.schedule_recurrence_policy}")
+
+    def _validate_schedule_time(self):
+        if self.schedule_time is not None:
+            if not isinstance(self.schedule_time, time):
+                raise ValueError("Schedule time must be a valid datetime.time object.")
+
+    def _validate_weekly_schedule(self):
+        if not isinstance(self.schedule_days, list):
+            raise ValueError("Schedule days must be a list of JobScheduleDays enum values.")
+        for day in self.schedule_days:
+            if day not in JobScheduleDays:
+                raise ValueError(f"Invalid schedule day: {day}")
+
+    def _validate_monthly_schedule(self):
+        if self.schedule_day_of_month is not None:
+            if not isinstance(self.schedule_day_of_month, int) or not (1 <= self.schedule_day_of_month <= 31):
+                raise ValueError("Schedule day of month must be an integer between 1 and 31.")
+
+    def _validate_daily_schedule(self):
+        pass  # No additional validation needed for daily recurrence
 
 # Job Queue class
