@@ -36,13 +36,13 @@ jobs:
 
     backup-job-2:
         location: /usr/home/myfiles2
-            recursive: true
-            compression: false
-            destination: http://bucket-name-2.s3-website-Region.amazonaws.com
-            schedule:
-                time: 18:00
-                timezone: CST
-                days: F
+        recursive: true
+        compression: false
+        destination: http://bucket-name-2.s3-website-Region.amazonaws.com
+        schedule:
+            time: 18:00
+            timezone: CST
+            days: F
 ```
 
 ## Example Commands
