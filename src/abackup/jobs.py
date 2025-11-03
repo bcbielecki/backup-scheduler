@@ -65,13 +65,15 @@ class JobScheduleDays(Enum):
 # only hold data; it shouldn't have any execution logic, only some validation code.
 class BackupJob:
 
-    __job_id_set = {}
+    # See comment below about unique job IDs
+    # __job_id_set = {}
 
-    def __init__(self, job_id):
+    def __init__(self):
 
-        if job_id in BackupJob.__job_id_set:
-            raise ValueError(f"Job ID '{job_id}' already exists. Job IDs must be unique.")
-        self.job_id = job_id
+        # I think this logic should be done at a higher level, perhaps in the Schedule class
+        # if job_id in BackupJob.__job_id_set:
+        #     raise ValueError(f"Job ID '{job_id}' already exists. Job IDs must be unique.")
+        # self.job_id = job_id
 
         # Initialize some default values
 
