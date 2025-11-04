@@ -127,7 +127,9 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
-    # install_requires=["peppercorn"],  # Optional
+    install_requires=[
+        "tzdata>=2025.2; sys_platform == 'win32'",
+        ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
