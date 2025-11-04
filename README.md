@@ -4,7 +4,7 @@ A primitive python-based tool which maintains information about and shedules rcl
 # Dependencies
 - rclone
 
-# Supported Systems
+# Supported Platforms
 - Debian, Ubuntu
 
 # Supported Python Versions
