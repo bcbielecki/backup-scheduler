@@ -51,14 +51,15 @@ class JobRecurrence(Enum):
 # <bcbielecki> 2025-11-02 alphaV0.1
 # Days of the week for scheduling purposes—should be used in conjunction with
 # JobRecurrence.WEEKLY
+# Values are integers corresponding to Python's datetime.weekday() method
 class JobScheduleDays(Enum):
-    MONDAY = "M"
-    TUESDAY = "T"
-    WEDNESDAY = "W"
-    THURSDAY = "R"
-    FRIDAY = "F"
-    SATURDAY = "U"
-    SUNDAY = "S"
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
 
 # <bcbielecki> 2025-11-02 alphaV0.1
 # An instance of the BackupJob class represents a job that will be executed by the core system.
