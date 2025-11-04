@@ -7,3 +7,6 @@
 # and so for projects targeting cross-platform compatibility that require time zone data,
 # it is recommended to declare a dependency on tzdata.
 tzdata==2025.2; sys_platform == "win32"
+
+# Linters and code formatters
+flake8
