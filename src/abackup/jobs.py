@@ -74,7 +74,7 @@ class BackupJob:
         # I think this logic should be done at a higher level, perhaps in the Schedule class
         # if job_id in BackupJob.__job_id_set:
         #     raise ValueError(f"Job ID '{job_id}' already exists. Job IDs must be unique.")
-        self.job_id = job_id
+        self.__job_id = job_id
 
         # Initialize some default values
 
@@ -99,7 +99,11 @@ class BackupJob:
 
         # Backup script settings (Optional)
         self.script_pre_path = None # Should be a Path object
-        self.script_post_path = None # Should be a Path object     
+        self.script_post_path = None # Should be a Path object 
+
+    @property
+    def job_id(self):
+        return self.__job_id    
 
     def validate(self):
         # This is where we can validate all the job properties
