@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from datetime import time
+from datetime import time, tzinfo
 
 # Job class
 
@@ -27,6 +27,7 @@ class JobStatus(Enum):
 # Currently supported types are:
 #   - GOOGLEDRIVE: Backup to Google Drive
 #   - NULL: No backup type specified—either it is the default value at initialization or something went wrong
+# TODO: Add more backup types in the future (e.g., Local, OneDrive, FTP, S3, etc.)
 class BackupType(Enum):
     GOOGLEDRIVE = "Google Drive"
     NULL = "null"
@@ -96,7 +97,7 @@ class BackupJob:
         self.schedule_day_of_month = None # Should be an integer between 1 and 31—meant only for JobRecurrence.MONTHLY
         self.schedule_recurrence_policy = JobRecurrence.DAILY
 
-        # Backup script settings
+        # Backup script settings (Optional)
         self.script_pre_path = None # Should be a Path object
         self.script_post_path = None # Should be a Path object     
 
@@ -150,9 +151,26 @@ class BackupJob:
         else:
             raise ValueError(f"Invalid recurrence policy: {self.schedule_recurrence_policy}")
 
+        # Backup script settings
+        if self.script_pre_path is not None:
+            if not isinstance(self.script_pre_path, Path):
+                raise ValueError("Pre-backup script path must be a valid Path object.")
+            if not self.script_pre_path.exists():
+                raise ValueError(f"Pre-backup script path '{self.script_pre_path}' does not exist.")
+        if self.script_post_path is not None:
+            if not isinstance(self.script_post_path, Path):
+                raise ValueError("Post-backup script path must be a valid Path object.")
+            if not self.script_post_path.exists():
+                raise ValueError(f"Post-backup script path '{self.script_post_path}' does not exist.")
+            
+    # Private validation methods
+
     def _validate_schedule_time(self):
         if self.schedule_time is not None:
-            if not isinstance(self.schedule_time, time):
+            if isinstance(self.schedule_time, time):
+                if self.schedule_time.tzinfo is None:
+                    raise ValueError("Schedule time must have timezone information.")
+            else:
                 raise ValueError("Schedule time must be a valid datetime.time object.")
 
     def _validate_weekly_schedule(self):
