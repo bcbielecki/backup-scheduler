@@ -5,3 +5,7 @@ The pipeline is based on this [GitHub Action Python documentation](https://docs.
 The actions are stored in .yaml files under the repo directory [./.github/workflows/](https://github.com/bcbielecki/backup-scheduler/tree/main/.github/workflows)
 
 Although the officially supported platforms are fewer, we currently test on Ubuntu, Windows, and Mac-OS for Python Versions 3.10-3.13
+
+
+# Test Coverage
+Ensure all tests are under the /test directory and end with `*_tests.py` so they are picked up by the CI/CD script.
