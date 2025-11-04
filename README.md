@@ -5,4 +5,7 @@ A primitive python-based tool which maintains information about and shedules rcl
 - rclone
 
 # Supported Systems
-Debian and Ubuntu
+- Debian, Ubuntu
+
+# Supported Python Versions
+- 3.12, 3.13
