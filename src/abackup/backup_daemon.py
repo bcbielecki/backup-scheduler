@@ -3,9 +3,11 @@ import platform
 
 if platform.system() == "Windows":
     #Do Windows-specific imports here
+    pass
 if platform.system() in ["Linux", "Darwin"]:
     #Do Unix-specific imports here
-    
+    pass
+
 # There should only ever be **one** Backup Daemon instance running per system.
 # This daemon will be responsible for starting/stopping the scheduler, executing the jobs,
 # and handling any system-level interactions required for background operation.
