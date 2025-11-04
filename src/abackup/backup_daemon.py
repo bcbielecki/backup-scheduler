@@ -19,7 +19,23 @@ if platform.system() in ["Linux", "Darwin"]:
 class BackupDaemon():
     # Ensure singleton behavior
     # Abstract Base Class
-    pass
+    def main_loop(self):
+        pass
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def restart(self):
+        pass
+
+    def status(self):
+        pass
+
+    def is_running(self) -> bool:
+        pass
 
 class Win32BackupDaemon(BackupDaemon):
     pass
