@@ -103,7 +103,19 @@ class BackupJob:
 
     @property
     def job_id(self):
-        return self.__job_id    
+        return self.__job_id
+
+    # Define equality and hashing based on job_id to ensure uniqueness in sets
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.job_id == other.job_id
+
+    def __hash__(self):
+        return hash(self.job_id)
+
+    def __repr__(self):
+        return f"BackupJob(ID={self.job_id})"    
 
     def validate(self):
         # This is where we can validate all the job properties

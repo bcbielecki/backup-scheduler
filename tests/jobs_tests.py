@@ -262,6 +262,19 @@ class TestJobDataValidation(unittest.TestCase):
             job.validate()  # Should not raise
         except ValueError:
             self.fail("validate() raised ValueError unexpectedly!")
+    
+    def test_job_equality(self):
+        job1 = InitializeJobWithGoodValues("job-001")
+        job2 = InitializeJobWithGoodValues("job-001")
+        job3 = InitializeJobWithGoodValues("job-002")
+        self.assertEqual(job1, job2)
+        self.assertNotEqual(job1, job3)
+    
+    def test_job_hashing(self):
+        job1 = InitializeJobWithGoodValues("job-001")
+        job2 = InitializeJobWithGoodValues("job-001")
+        job_set = {job1}
+        self.assertIn(job2, job_set)  # job2 should be considered the same as job1 in the set
 
 
 if __name__ == '__main__':
