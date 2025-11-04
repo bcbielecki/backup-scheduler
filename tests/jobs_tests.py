@@ -5,7 +5,7 @@ from datetime import time, tzinfo
 from zoneinfo import ZoneInfo
 
 def InitializeJobWithGoodValues():
-    job = jobs.BackupJob()
+    job = jobs.BackupJob("test-job-001")
     job.status = jobs.JobStatus.SCHEDULED
     job.source_path = Path(".")  # Current directory should exist
     job.recursive = True
@@ -28,6 +28,24 @@ class TestJobDataValidation(unittest.TestCase):
             job.validate()  # Should not raise
         except ValueError:
             self.fail("BackupJob.validate() raised ValueError unexpectedly!")
+
+    def test_invalid_job_id_none(self):
+        job = InitializeJobWithGoodValues()
+        job.job_id = None
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_job_id_empty(self):
+        job = InitializeJobWithGoodValues()
+        job.job_id = "   "
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_job_id_not_string(self):
+        job = InitializeJobWithGoodValues()
+        job.job_id = 12345  # Not a string
+        with self.assertRaises(ValueError) as context:
+            job.validate()
 
     def test_invalid_job_status(self):
         job = InitializeJobWithGoodValues()

@@ -69,12 +69,12 @@ class BackupJob:
     # See comment below about unique job IDs
     # __job_id_set = {}
 
-    def __init__(self):
+    def __init__(self, job_id):
 
         # I think this logic should be done at a higher level, perhaps in the Schedule class
         # if job_id in BackupJob.__job_id_set:
         #     raise ValueError(f"Job ID '{job_id}' already exists. Job IDs must be unique.")
-        # self.job_id = job_id
+        self.job_id = job_id
 
         # Initialize some default values
 
@@ -103,6 +103,9 @@ class BackupJob:
 
     def validate(self):
         # This is where we can validate all the job properties
+
+        if self.job_id is None or not isinstance(self.job_id, str) or self.job_id.strip() == "":
+            raise ValueError("Job ID must be a non-empty string.")
 
         if self.status not in JobStatus:
             raise ValueError(f"Invalid job status: {self.status}")
