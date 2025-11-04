@@ -173,6 +173,72 @@ class TestJobDataValidation(unittest.TestCase):
         except ValueError:
             self.fail("validate() raised ValueError unexpectedly!")
     
+    def test_invalid_schedule_time_type(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_time = "not_a_time_object"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_schedule_time_tzinfo(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_time = time(2, 0)  # No tzinfo
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_valid_weekly_recurrence_configuration(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.WEEKLY
+        job.schedule_days = [jobs.JobScheduleDays.MONDAY, jobs.JobScheduleDays.WEDNESDAY]
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+    
+    def test_invalid_weekly_recurrence_configuration(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.WEEKLY
+        job.schedule_days = "not_a_list"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_weekly_recurrence_configuration_invalid_day(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.WEEKLY
+        job.schedule_days = [jobs.JobScheduleDays.MONDAY, "invalid_day"]
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_valid_monthly_recurrence_configuration(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.MONTHLY
+        job.schedule_day_of_month = 15
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+    
+    def test_invalid_monthly_recurrence_configuration_invalid_day_high(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.MONTHLY
+        job.schedule_day_of_month = 32  # Invalid day
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_monthly_recurrence_configuration_invalid_day_low(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.MONTHLY
+        job.schedule_day_of_month = 0  # Invalid day
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_valid_daily_recurrence_configuration(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = jobs.JobRecurrence.DAILY
+        job.schedule_time = time(3, 0, tzinfo=ZoneInfo("America/Los_Angeles"))
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
 
 
 if __name__ == '__main__':
