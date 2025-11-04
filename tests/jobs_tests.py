@@ -68,6 +68,112 @@ class TestJobDataValidation(unittest.TestCase):
         job.recursive = "not_a_boolean"
         with self.assertRaises(ValueError) as context:
             job.validate()
+    
+    def test_invalid_compression_flag(self):
+        job = InitializeJobWithGoodValues()
+        job.compression = "not_a_boolean"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_backup_type(self):
+        job = InitializeJobWithGoodValues()
+        job.BackupType = "invalid_backup_type"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_null_backup_type(self):
+        job = InitializeJobWithGoodValues()
+        job.BackupType = jobs.BackupType.NULL
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+
+    def test_invalid_destination_url(self):
+        job = InitializeJobWithGoodValues()
+        job.destination_url = 12345  # Not a string
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+
+    def test_invalid_max_file_retention_size_type(self):
+        job = InitializeJobWithGoodValues()
+        job.max_file_retention_size = "not_an_integer"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_max_file_retention_size_in_range(self):
+        job = InitializeJobWithGoodValues()
+        job.max_file_retention_size = -100  # Negative size
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_retention_policy(self):
+        job = InitializeJobWithGoodValues()
+        job.retention_policy = "invalid_policy"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+
+    def test_invalid_recurrence_policy(self):
+        job = InitializeJobWithGoodValues()
+        job.schedule_recurrence_policy = "invalid_recurrence"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_invalid_pre_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_pre_path = "not_a_path_object"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_nonexistent_pre_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_pre_path = Path("/path/that/does/not/exist")
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+
+    def test_valid_pre_script_path_none(self):
+        job = InitializeJobWithGoodValues()
+        job.script_pre_path = None  # No script, should be valid
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+
+    def test_valid_pre_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_pre_path = Path(".")  # Current directory should exist
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+    
+    def test_invalid_post_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_post_path = "not_a_path_object"
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_nonexistent_post_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_post_path = Path("/path/that/does/not/exist")
+        with self.assertRaises(ValueError) as context:
+            job.validate()
+    
+    def test_valid_post_script_path_none(self):
+        job = InitializeJobWithGoodValues()
+        job.script_post_path = None  # No script, should be valid
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+    
+    def test_valid_post_script_path(self):
+        job = InitializeJobWithGoodValues()
+        job.script_post_path = Path(".")  # Current directory should exist
+        try:
+            job.validate()  # Should not raise
+        except ValueError:
+            self.fail("validate() raised ValueError unexpectedly!")
+    
+
 
 if __name__ == '__main__':
     unittest.main()
