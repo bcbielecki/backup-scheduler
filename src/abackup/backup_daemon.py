@@ -1,6 +1,15 @@
 
+# There should only ever be **one** Backup Daemon instance running per system.
+# This daemon will be responsible for starting/stopping the scheduler, executing the jobs,
+# and handling any system-level interactions required for background operation.
 
-class BackupDaemon:
+# The cli commands should be able to find/reach this daemon instance to run commands.
+# To do so, it should use BackupDaemon as an abstraction layer for platform-specific implementations.
+
+
+class BackupDaemon():
+    # Ensure singleton behavior
+    # Abstract Base Class
     pass
 
 class Win32BackupDaemon(BackupDaemon):
