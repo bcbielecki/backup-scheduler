@@ -1,0 +1,9 @@
+# See https://peps.python.org/pep-0508/ for environment marker syntax.
+
+# The zoneinfo module does not directly provide time zone data, 
+# and instead pulls time zone information from the system time zone database or 
+# the first-party PyPI package tzdata, if available. 
+# Some systems, including notably Windows systems, do not have an IANA database available, 
+# and so for projects targeting cross-platform compatibility that require time zone data,
+# it is recommended to declare a dependency on tzdata.
+tzdata==2025.2; sys_platform == "win32"
