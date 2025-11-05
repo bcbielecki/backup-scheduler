@@ -16,9 +16,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, Debian-12]
+        os: [ubuntu-latest, macos-latest, windows-latest, debian-13]
         # Support debian-latest later by self-hosting a runner
         python-version: ["3.12", "3.13"]
+        exclude:
+          - os: debian-13
+            python-version: "3.14"  # Not yet available on Debian-13
 
     steps:
     - uses: actions/checkout@v4
