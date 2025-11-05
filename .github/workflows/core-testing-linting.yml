@@ -48,7 +48,7 @@ jobs:
         files: "requirements.txt"
     - name: Install dependencies if requirements.txt exists
       if: steps.check_file.outputs.filesExist == 'true'
-      run: python{{ matrix.python-version }} -m pip install -r requirements.txt
+      run: python${{ matrix.python-version }} -m pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -57,7 +57,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install src files as package 
       run: |
-        python{{ matrix.python-version }} -m pip install -e . --config-settings editable_mode=strict
+        python${{ matrix.python-version }} -m pip install -e . --config-settings editable_mode=strict
     - name: Test with unittest
       run: |
-        python{{ matrix.python-version }} -m unittest discover -s ./tests -p '*_tests.py'
+        python${{ matrix.python-version }} -m unittest discover -s ./tests -p '*_tests.py'
