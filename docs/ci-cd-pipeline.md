@@ -4,6 +4,8 @@ The pipeline is based on this [GitHub Action Python documentation](https://docs.
 
 The actions are stored in .yaml files under the repo directory [./.github/workflows/](https://github.com/bcbielecki/backup-scheduler/tree/main/.github/workflows)
 
+The syntax for workflow .yaml files can be found on this [GitHub reference page](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
+
 Although the officially supported platforms are fewer, we currently test on Ubuntu, Windows, and Mac-OS for Python Versions 3.10-3.13
 
 
