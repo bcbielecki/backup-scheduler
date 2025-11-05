@@ -37,8 +37,8 @@ jobs:
         sudo apt install -y python${{ matrix.python-version }}-minimal
     - name: Upgrade Pip and Install flake8 dependency
       run: |
-        python{{ matrix.python-version }} -m pip install --upgrade pip
-        python{{ matrix.python-version }} -m pip install flake8
+        python${{ matrix.python-version }} -m pip install --upgrade pip
+        python${{ matrix.python-version }} -m pip install flake8
       # The following line only works on unix systems:
       # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Check for requirements.txt
