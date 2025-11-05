@@ -33,9 +33,12 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }} on Debian-13
       if: contains(matrix.os, 'debian')
       # setup-python action does not support debian directly
-      # For some reason python isn't added to path by default on debian; alias it here
       run: |
         sudo apt install -y python${{ matrix.python-version }}
+    - name: Alias Python ${{ matrix.python-version }} on Debian-13
+      if: contains(matrix.os, 'debian')
+       # For some reason python isn't added to path by default on debian; alias it here
+      run: |
         alias python='python${{ matrix.python-version }}'
     - name: Upgrade Pip and Install flake8 dependency
       run: |
