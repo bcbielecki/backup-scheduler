@@ -31,7 +31,7 @@ jobs:
       if: matrix.os == 'Debian-12'
       # Consider python-*-full later if needed
       run: |
-        echo ${{secrets.SFDEVOPS002PSSWD}} | sudo -S apt install -y python${{ matrix.python-version }}-minimal
+        sudo apt install -y python${{ matrix.python-version }}-minimal
     - name: Upgrade Pip and Install flake8 dependency
       run: |
         python -m pip install --upgrade pip
