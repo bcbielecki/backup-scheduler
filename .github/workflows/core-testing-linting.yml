@@ -38,10 +38,12 @@ jobs:
         sudo apt install -y python-is-python3
         sudo apt install -y python3-pip
         sudo apt install -y python${{ matrix.python-version }}-venv
+    - name: Create virtual environment
+      run: |
         python3 -m venv ./venv
-        source ./venv/bin/activate
     - name: Upgrade Pip and Install flake8 dependency
       run: |
+        source ./venv/bin/activate
         python -m pip install --upgrade pip
         python -m pip install flake8
       # The following line only works on unix systems:
@@ -53,7 +55,9 @@ jobs:
         files: "requirements.txt"
     - name: Install dependencies if requirements.txt exists
       if: steps.check_file.outputs.filesExist == 'true'
-      run: python -m pip install -r requirements.txt
+      run: | 
+        source ./venv/bin/activate
+        python -m pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -62,7 +66,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install src files as package 
       run: |
+        source ./venv/bin/activate
         python -m pip install -e . --config-settings editable_mode=strict
     - name: Test with unittest
       run: |
+        source ./venv/bin/activate
         python -m unittest discover -s ./tests -p '*_tests.py'
