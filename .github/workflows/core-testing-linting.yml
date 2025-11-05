@@ -37,8 +37,8 @@ jobs:
         sudo apt install -y python${{ matrix.python-version }}-minimal
     - name: Upgrade Pip and Install flake8 dependency
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8
+        python{{ matrix.python-version }} -m pip install --upgrade pip
+        python{{ matrix.python-version }} -m pip install flake8
       # The following line only works on unix systems:
       # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Check for requirements.txt
@@ -48,7 +48,7 @@ jobs:
         files: "requirements.txt"
     - name: Install dependencies if requirements.txt exists
       if: steps.check_file.outputs.filesExist == 'true'
-      run: pip install -r requirements.txt
+      run: python{{ matrix.python-version }} -m pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -57,7 +57,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install src files as package 
       run: |
-        pip install -e . --config-settings editable_mode=strict
+        python{{ matrix.python-version }} -m pip install -e . --config-settings editable_mode=strict
     - name: Test with unittest
       run: |
-        python -m unittest discover -s ./tests -p '*_tests.py'
+        python{{ matrix.python-version }} -m unittest discover -s ./tests -p '*_tests.py'
