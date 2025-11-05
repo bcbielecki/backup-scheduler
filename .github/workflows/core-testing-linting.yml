@@ -26,12 +26,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      if: matrix.os != 'Debian-12'
+      if: matrix.os != 'debian-13'
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up Python ${{ matrix.python-version }} on Debian-12
-      if: matrix.os == 'Debian-12'
+      if: matrix.os == 'debian-13'
       # Consider python-*-full later if needed
       run: |
         sudo apt install -y python${{ matrix.python-version }}-minimal
