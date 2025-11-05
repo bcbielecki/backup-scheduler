@@ -16,12 +16,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, debian-13]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         # Support debian-latest later by self-hosting a runner
         python-version: ["3.12", "3.13"]
-        exclude:
+        include:
           - os: debian-13
-            python-version: "3.14"  # Not yet available on Debian-13
+            python-version: "3.13"  # Only version supported by Debian-13
 
     steps:
     - uses: actions/checkout@v4
@@ -30,15 +30,17 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Set up Python ${{ matrix.python-version }} on Debian-12
-      if: matrix.os == 'debian-13'
-      # Consider python-*-full later if needed
+    - name: Set up Python ${{ matrix.python-version }} on Debian-13
+      if: contains(matrix.os, 'debian')
+      # setup-python action does not support debian directly
+      # For some reason python isn't added to path by default on debian; alias it here
       run: |
-        sudo apt install -y python${{ matrix.python-version }}-minimal
+        sudo apt install -y python${{ matrix.python-version }}
+        alias python='python${{ matrix.python-version }}'
     - name: Upgrade Pip and Install flake8 dependency
       run: |
-        python${{ matrix.python-version }} -m pip install --upgrade pip
-        python${{ matrix.python-version }} -m pip install flake8
+        python -m pip install --upgrade pip
+        python -m pip install flake8
       # The following line only works on unix systems:
       # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Check for requirements.txt
@@ -48,7 +50,7 @@ jobs:
         files: "requirements.txt"
     - name: Install dependencies if requirements.txt exists
       if: steps.check_file.outputs.filesExist == 'true'
-      run: python${{ matrix.python-version }} -m pip install -r requirements.txt
+      run: python -m pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -57,7 +59,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install src files as package 
       run: |
-        python${{ matrix.python-version }} -m pip install -e . --config-settings editable_mode=strict
+        python -m pip install -e . --config-settings editable_mode=strict
     - name: Test with unittest
       run: |
-        python${{ matrix.python-version }} -m unittest discover -s ./tests -p '*_tests.py'
+        python -m unittest discover -s ./tests -p '*_tests.py'
